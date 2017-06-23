@@ -1,23 +1,10 @@
-/*import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-
-import App from './components/app';
-import reducers from './reducers';
-
-const createStoreWithMiddleware = applyMiddleware()(createStore);
-
-ReactDOM.render(
-  <Provider store={createStoreWithMiddleware(reducers)}>
-    <App />
-  </Provider>
-  , document.querySelector('.container'));*/
+import _ from 'lodash';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import YTSearch from 'youtube-api-search';
 import SearchBar from './components/search_bar';
 import VideoList from './components/video_list';
+import VideoDetail from './components/video_detail.js';
 const API_KEY = 'AIzaSyD5qq9iNl_gKpRvEDqd4nCT16jXyh8Y6vs';
 
 //search function 
@@ -29,19 +16,35 @@ class App extends Component{
 
   constructor(props){
       super(props);
-      this.state = {videos:[] };
+      this.state = {
+        videos:[],
+        selectedVideo: null
+     };
 
-      YTSearch({key:API_KEY, term:'surfboards'},(videos) => {
-        this.setState({ videos}); //this is when the state name and api respose is the same name
+     this.videoSearch('dallas cowboys highlights');
+  }
+
+  videoSearch(term){
+      YTSearch({key:API_KEY, term:term},(videos) => {
+        this.setState({
+          videos:videos,
+          selectedVideo: videos[0]
+        }); //this is when the state name and api respose is the same name
         //this.setState({ videos: videos});
       });
   }
 
   render(){
+      const videoSearch = _.debounce((term) =>{this.videoSearch(term)},300);
+
       return (
         <div>
-            <SearchBar/>
-            <VideoList videos={this.state.videos}/>
+            <SearchBar onSearchTermChange = {videoSearch}/>
+            <VideoDetail video={this.state.selectedVideo}/>
+            <VideoList 
+              onVideoSelect={selectedVideo => this.setState({selectedVideo})}
+              videos={this.state.videos}
+              />
         </div>
       );
   }
