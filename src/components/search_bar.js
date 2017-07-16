@@ -17,10 +17,15 @@ class SearchBar extends Component{
     render(){
         //return <input onChange={this.onInputChange} />;
         return (
-            <div className="search-bar">
-                <input
-                value = {this.state.term}
-                onChange={event => this.onInputChange(event.target.value)} />
+            <div className="search-bar col-md-8 col-md-offset-2">
+                <div className="input-group">
+                    <input type="text" className="form-control" placeholder="Search for..."
+                            value = {this.state.term}
+                            onChange={event => this.onInputChange(event.target.value)}/>
+                    <span className="input-group-btn">
+                        <button className="btn btn-default" type="button"><i className="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
             </div>
         );
     }
